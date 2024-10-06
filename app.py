@@ -1,43 +1,60 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, render_template, request, jsonify
 import torch
+import numpy as np
 from environment import TicTacToeEnv
 from deep_q_networks import DQN
 
 app = Flask(__name__)
 
-# Initialize the game environment
+# Load the trained model
+model_path = 'saved_model/model_weights.pth'
+model = DQN(9, 9)
+model.load_state_dict(torch.load(model_path))
+model.eval()
+
+# Initialize TicTacToe environment
 env = TicTacToeEnv()
 
-# Load the trained agent
-agent = DQN(9, 9)
-agent.load_state_dict(torch.load('saved_model/model_weights.pth'))
-agent.eval()
-
 @app.route('/')
-def home():
+def index():
     return render_template('index.html')
 
-@app.route('/init', methods=['GET'])
-def init_game():
-    state = env.reset()
-    return jsonify({'board': env.board.flatten().tolist()})
-
 @app.route('/move', methods=['POST'])
-def make_move():
-    data = request.json
-    move = data['move']
-    state, reward, done, _ = env.step(-1, move)
-    
-    if done:
-        return jsonify({'board': env.board.flatten().tolist(), 'done': True, 'winner': 'human' if reward == 1 else 'draw'})
+def move():
+    data = request.get_json()
+    board = np.array(data['board']).reshape(3, 3)
+    player_symbol = 1 if data['player_symbol'] == 'X' else -1
 
+    # Update environment with the current board state
+    env.board = board
+
+    # Check if the game is over before AI makes a move
+    result = env.check_winner()
+    if result == player_symbol:
+        return jsonify(status='game_over', message='You win!', board=board.flatten().tolist())
+    elif result == -player_symbol:
+        return jsonify(status='game_over', message='AI wins!', board=board.flatten().tolist())
+    elif result == 0:
+        return jsonify(status='game_over', message='It\'s a draw!', board=board.flatten().tolist())
+
+    # AI makes its move
     with torch.no_grad():
-        q_values = agent(torch.FloatTensor(state))
+        q_values = model(torch.FloatTensor(env.board.flatten()))
         valid_actions = [i for i in range(9) if env.board.flatten()[i] == 0]
-        action = valid_actions[torch.argmax(q_values[valid_actions]).item()]
-        state, reward, done, _ = env.step(1, action)
+        ai_action = valid_actions[torch.argmax(q_values[valid_actions]).item()]
 
-    return jsonify({'board': env.board.flatten().tolist(), 'done': done, 'winner': 'agent' if reward == 1 else 'draw'})
+    env.step(1, ai_action)  # AI plays as 'X'
+
+    # Check game status again after AI's move
+    result = env.check_winner()
+    if result == player_symbol:
+        return jsonify(status='game_over', message='You win!', board=env.board.flatten().tolist())
+    elif result == -player_symbol:
+        return jsonify(status='game_over', message='AI wins!', board=env.board.flatten().tolist())
+    elif result == 0:
+        return jsonify(status='game_over', message='It\'s a draw!', board=env.board.flatten().tolist())
+
+    return jsonify(status='continue', board=env.board.flatten().tolist())
 
 if __name__ == '__main__':
     app.run(debug=True)

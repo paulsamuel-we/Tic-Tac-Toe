@@ -3,15 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <title>Tic Tac Toe</title>
+    <title>Tic Tac Toe - Play vs AI</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Tic Tac Toe</h1>
-        <div id="board" class="board"></div>
-        <div id="status" class="status"></div>
+        <h1>Tic-Tac-Toe</h1>
+        <p>Select X or O to begin:</p>
+        <div class="btn-group">
+            <button id="playX" class="btn" onclick="setPlayer('X')">Play as X</button>
+            <button id="playO" class="btn" onclick="setPlayer('O')">Play as O</button>
+        </div>
+        <div id="status">Waiting for selection...</div>
+
+        <div id="board">
+            <div class="cell" onclick="makeMove(0)"></div>
+            <div class="cell" onclick="makeMove(1)"></div>
+            <div class="cell" onclick="makeMove(2)"></div>
+            <div class="cell" onclick="makeMove(3)"></div>
+            <div class="cell" onclick="makeMove(4)"></div>
+            <div class="cell" onclick="makeMove(5)"></div>
+            <div class="cell" onclick="makeMove(6)"></div>
+            <div class="cell" onclick="makeMove(7)"></div>
+            <div class="cell" onclick="makeMove(8)"></div>
+        </div>
+
+        <button id="restartBtn" onclick="resetGame()">Restart Game</button>
     </div>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    <script src="/static/js/script.js"></script>
 </body>
 </html>
