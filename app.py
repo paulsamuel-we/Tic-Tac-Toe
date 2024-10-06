@@ -7,7 +7,7 @@ from deep_q_networks import DQN
 app = Flask(__name__)
 
 # Load the trained model
-model_path = 'saved_model/model_weights.pth'
+model_path = 'saved_model/policy_model_weights.pth'
 model = DQN(9, 9)
 model.load_state_dict(torch.load(model_path))
 model.eval()
