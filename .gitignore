@@ -1,0 +1,5 @@
+# Ignoring the virtual environmrnt xo
+xo/
+
+# Ignoring .txt files if any
+*.txt
