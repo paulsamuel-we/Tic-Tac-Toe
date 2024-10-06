@@ -12,7 +12,7 @@ env = TicTacToeEnv()
 
 # Load the trained agent (assume model is saved as 'agent.pth')
 agent = DQN(9, 9)
-agent.load_state_dict(torch.load('agent.pth'))
+agent.load_state_dict(torch.load('model\bot.pth'))
 agent.eval()
 
 # Route to get the initial board state
