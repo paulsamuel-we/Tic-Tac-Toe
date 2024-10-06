@@ -3,75 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <title>Tic Tac Toe</title>
-    <style>
-        /* Basic styling for the Tic Tac Toe board */
-        .board {
-            display: grid;
-            grid-template-columns: repeat(3, 100px);
-            grid-gap: 5px;
-        }
-        .cell {
-            width: 100px;
-            height: 100px;
-            background-color: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            cursor: pointer;
-        }
-    </style>
 </head>
 <body>
-
-<h1>Tic Tac Toe</h1>
-<div id="board" class="board"></div>
-<p id="message"></p>
-
-<script>
-    const boardElement = document.getElementById('board');
-    const messageElement = document.getElementById('message');
-    let board;
-
-    async function initGame() {
-        const response = await fetch('/init');
-        const data = await response.json();
-        board = data.board;
-        renderBoard();
-    }
-
-    function renderBoard() {
-        boardElement.innerHTML = '';
-        board.forEach((cell, index) => {
-            const cellElement = document.createElement('div');
-            cellElement.className = 'cell';
-            cellElement.innerText = cell === 1 ? 'X' : cell === -1 ? 'O' : '';
-            cellElement.onclick = () => handleCellClick(index);
-            boardElement.appendChild(cellElement);
-        });
-    }
-
-    async function handleCellClick(index) {
-        if (board[index] !== 0) return; // Ignore clicks on filled cells
-        const response = await fetch('/move', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ move: index })
-        });
-        const data = await response.json();
-        board = data.board;
-        renderBoard();
-
-        if (data.done) {
-            messageElement.innerText = `Game Over! Winner: ${data.winner}`;
-        }
-    }
-
-    initGame();
-</script>
-
+    <div class="container">
+        <h1>Tic Tac Toe</h1>
+        <div id="board" class="board"></div>
+        <div id="status" class="status"></div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
