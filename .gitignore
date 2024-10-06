@@ -3,3 +3,10 @@ xo/
 
 # Ignoring .txt files if any
 *.txt
+
+# Ignore Python cache files
+__pycache__/
+
+# Ignore other generated files
+*.pyc
+*.pyo
