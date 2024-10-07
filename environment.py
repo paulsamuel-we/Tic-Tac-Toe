@@ -60,11 +60,11 @@ class TicTacToeEnv:
 
         # Set reward based on the result
         if result == player:  # Player wins
-            reward = 1  # Winning reward
+            reward = 10  # Winning reward
         elif result == -player:  # Opponent wins
-            reward = -1  # Losing penalty
+            reward = -10  # Losing penalty
         elif result == 0:  # Draw
-            reward = 0  # Small reward for draw
+            reward = 5  # Small reward for draw
         else:
             reward = 0  # No result yet, neutral reward
 
