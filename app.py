@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import torch
 import numpy as np
 from environment import TicTacToeEnv
-from deep_q_networks import DQN
+from DDQN_approach.deep_q_networks import DQN
 
 app = Flask(__name__)
 
